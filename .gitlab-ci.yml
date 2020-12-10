@@ -1,0 +1,65 @@
+image: edbizarro/gitlab-ci-pipeline-php:7.2-alpine
+
+.default-cache: &default-cache
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+    - public/
+
+.push-cache: &push-cache
+  cache:
+    <<: *default-cache
+    policy: push
+
+.pull-cache: &pull-cache
+  cache:
+    <<: *default-cache
+    policy: pull
+
+.use-postgres: &use-postgres
+  services:
+    - postgres:12.0-alpine
+
+stages:
+  - composer
+  - lint
+  - testing
+
+.dedicated-runner: &dedicated-runner
+  tags:
+    - internal
+    - dind
+
+install_dependencies:
+  <<: *dedicated-runner
+  stage: composer
+  cache:
+    <<: *default-cache
+  before_script:
+    - 'which ssh-agent || (apk --update add openssh bash)'
+    - eval $(ssh-agent -s)
+    - bash -c "ssh-add <(echo '$SSH_PRIVATE_KEY')"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H '192.168.49.242' >> ~/.ssh/known_hosts
+    - ssh-keyscan 192.168.49.242 | sort -u - ~/.ssh/known_hosts -o ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - composer valid
+    - COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
+
+lint:
+  <<: *use-postgres
+  <<: *dedicated-runner
+  stage: lint
+  <<: *pull-cache
+  script:
+    - composer lint
+
+testing:
+  <<: *use-postgres
+  <<: *dedicated-runner
+  stage: testing
+  <<: *pull-cache
+  script:
+    - composer test
