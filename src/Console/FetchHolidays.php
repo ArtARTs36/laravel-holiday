@@ -22,7 +22,7 @@ class FetchHolidays extends Command
         } else if ($type === '2months') {
             $days = $determiner->determinePeriod(Carbon::parse('2 month ago'), Carbon::now());
         } elseif ($type === 'year') {
-            $days = $determiner->determinePeriod(Carbon::parse('1 year ago'), Carbon::now());
+            $days = $determiner->determineYear(Carbon::now()->year);
         } else {
             $this->comment('Given incorrect type!');
 

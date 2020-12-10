@@ -38,9 +38,7 @@ class IsDayOff implements WorkTypeDeterminer
           'delimeter' => '|',
         ];
 
-        $url = '/api/getdata?' . http_build_query($query);
-
-        $values = explode('|', $this->send($url));
+        $values = $this->performRequest($query);
 
         $period = new \DatePeriod($start, new \DateInterval('P1D'), $end);
 
@@ -51,6 +49,37 @@ class IsDayOff implements WorkTypeDeterminer
         }
 
         return $days;
+    }
+
+    public function determineYear(int $year): array
+    {
+        $query = [
+            'year'      => $year,
+            'pre'       => 1,
+            'delimeter' => '|',
+        ];
+
+        $values = $this->performRequest($query);
+
+        $date = new \DateTime();
+        $date->setDate($year, 1, 1);
+
+        $days = [];
+
+        foreach ($values as $value) {
+            $days[] = new Day(clone $date, $this->getSlug($value));
+
+            $date->modify('+1 day');
+        }
+
+        return $days;
+    }
+
+    protected function performRequest(array $query): array
+    {
+        $url = '/api/getdata?' . http_build_query($query);
+
+        return explode('|', $this->send($url));
     }
 
     protected function genUrlForOneDate(\DateTimeInterface $date): string

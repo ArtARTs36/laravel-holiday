@@ -17,4 +17,9 @@ interface WorkTypeDeterminer
      * @return array<Day>
      */
     public function determinePeriod(\DateTimeInterface $start, \DateTimeInterface $end): array;
+
+    /**
+     * @return array<Day>
+     */
+    public function determineYear(int $year): array;
 }
