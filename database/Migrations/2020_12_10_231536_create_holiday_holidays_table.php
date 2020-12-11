@@ -27,6 +27,13 @@ class CreateHolidayHolidaysTable extends Migration
                 ->foreign('work_type_id')
                 ->references('id')
                 ->on('holiday_work_types');
+
+            $table->unsignedBigInteger('country_id');
+
+            $table
+                ->foreign('country_id')
+                ->references('id')
+                ->on('holiday_countries');
         });
     }
 

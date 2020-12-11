@@ -40,19 +40,19 @@ final class IsDayOffTest extends TestCase
 
         $client->setResponseData([200, [], '0']);
 
-        self::assertEquals(WorkType::SLUG_FULL_TIME, $isDayOff->determine(new \DateTime()));
+        self::assertEquals(WorkType::SLUG_FULL_TIME, $isDayOff->determine(new \DateTime())->getWorkTypeSlug());
 
         // 2. Expected Not Work
 
         $client->setResponseData([200, [], '1']);
 
-        self::assertEquals(WorkType::SLUG_WEEKEND, $isDayOff->determine(new \DateTime()));
+        self::assertEquals(WorkType::SLUG_WEEKEND, $isDayOff->determine(new \DateTime())->getWorkTypeSlug());
 
         // 3. Expected Short Day
 
         $client->setResponseData([200, [], '2']);
 
-        self::assertEquals(WorkType::SLUG_SHORT_DAY, $isDayOff->determine(new \DateTime()));
+        self::assertEquals(WorkType::SLUG_SHORT_DAY, $isDayOff->determine(new \DateTime())->getWorkTypeSlug());
 
         // 4. Given Unexpected Status
 
