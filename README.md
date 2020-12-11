@@ -14,6 +14,10 @@ Run command: `composer require artarts36/laravel-holiday`
 
 Add Provider: `ArtARTs36\LaravelHoliday\Providers\HolidayProvider`
 
+Run command: `php artisan migrate`
+
+Run command: `php artisan db:seed --class=HolidayDatabaseSeeder`
+
 ## Commands
 
 | Command                     | Description                              |
