@@ -60,6 +60,6 @@ final class IsDayOffTest extends TestCase
 
         self::expectException(GivenInCorrectStatus::class);
 
-        $isDayOff->determine(new \DateTime());;
+        $isDayOff->determine(new \DateTime());
     }
 }
