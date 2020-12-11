@@ -25,7 +25,7 @@ class HolidayProvider extends ServiceProvider
                 FetchHolidays::class,
             ]);
 
-            require_once __DIR__ . '/../../database/Seeders/HolidayWorkTypeSeeder.php';
+            require_once __DIR__ . '/../../database/Seeders/HolidayDatabaseSeeder.php';
         }
 
         $this->registerDertiminer();

@@ -5,16 +5,26 @@ namespace ArtARTs36\LaravelHoliday\Determiners;
 use ArtARTs36\LaravelHoliday\Contracts\WorkTypeDeterminer;
 use ArtARTs36\LaravelHoliday\Entities\Day;
 use ArtARTs36\LaravelHoliday\Exceptions\GivenInCorrectStatus;
+use ArtARTs36\LaravelHoliday\Exceptions\SelectedCountryNotAllowed;
+use ArtARTs36\LaravelHoliday\Models\Country;
 use ArtARTs36\LaravelHoliday\Models\WorkType;
 use GuzzleHttp\ClientInterface;
 
 class IsDayOff implements WorkTypeDeterminer
 {
-    protected $map = [
+    protected const DEFAULT_DELIMITER = '|';
+
+    protected $statusMap = [
         0 => WorkType::SLUG_FULL_TIME,
         1 => WorkType::SLUG_WEEKEND,
         2 => WorkType::SLUG_SHORT_DAY,
         4 => WorkType::SLUG_FULL_TIME,
+    ];
+
+    protected $countryMap = [
+        Country::CODE_RUS => 'ru',
+        Country::CODE_KAZ => 'kz',
+        Country::CODE_UKR => 'ua',
     ];
 
     protected $client;
@@ -24,18 +34,32 @@ class IsDayOff implements WorkTypeDeterminer
         $this->client = $client;
     }
 
-    public function determine(\DateTimeInterface $date): string
+    public function determine(\DateTimeInterface $date, string $country = Country::CODE_RUS): Day
     {
-        return $this->getSlug((int) $this->send($this->genUrlForOneDate($date)));
+        $query = [
+            'year'      => $date->format('Y'),
+            'month'     => $date->format('m'),
+            'day'       => $date->format('d'),
+            'pre'       => 1,
+            'cc'        => $this->getCountry($country),
+        ];
+
+        $value = $this->performRequest($query)[0];
+
+        return new Day($date, $this->getWorkTypeSlug($value), $this->getCountry($country));
     }
 
-    public function determinePeriod(\DateTimeInterface $start, \DateTimeInterface $end): array
-    {
+    public function determinePeriod(
+        \DateTimeInterface $start,
+        \DateTimeInterface $end,
+        string $country = Country::CODE_RUS
+    ): array {
         $query = [
           'date1'     => $this->format($start),
           'date2'     => $this->format($end),
           'pre'       => 1,
-          'delimeter' => '|',
+          'delimeter' => static::DEFAULT_DELIMITER,
+          'cc'        => $this->getCountry($country),
         ];
 
         $values = $this->performRequest($query);
@@ -45,18 +69,19 @@ class IsDayOff implements WorkTypeDeterminer
         $days = [];
 
         foreach ($period as $index => $date) {
-            $days[] = new Day($date, $this->getSlug($values[$index]));
+            $days[] = new Day($date, $this->getWorkTypeSlug($values[$index]), $country);
         }
 
         return $days;
     }
 
-    public function determineYear(int $year): array
+    public function determineYear(int $year, string $country = Country::CODE_RUS): array
     {
         $query = [
             'year'      => $year,
             'pre'       => 1,
-            'delimeter' => '|',
+            'delimeter' => static::DEFAULT_DELIMITER,
+            'cc'        => $this->getCountry($country),
         ];
 
         $values = $this->performRequest($query);
@@ -67,7 +92,7 @@ class IsDayOff implements WorkTypeDeterminer
         $days = [];
 
         foreach ($values as $value) {
-            $days[] = new Day(clone $date, $this->getSlug($value));
+            $days[] = new Day(clone $date, $this->getWorkTypeSlug($value), $country);
 
             $date->modify('+1 day');
         }
@@ -79,12 +104,7 @@ class IsDayOff implements WorkTypeDeterminer
     {
         $url = '/api/getdata?' . http_build_query($query);
 
-        return explode('|', $this->send($url));
-    }
-
-    protected function genUrlForOneDate(\DateTimeInterface $date): string
-    {
-        return $this->format($date) . '?pre=1';
+        return explode(static::DEFAULT_DELIMITER, $this->send($url));
     }
 
     protected function format(\DateTimeInterface $date): string
@@ -97,12 +117,21 @@ class IsDayOff implements WorkTypeDeterminer
         return $this->client->request('GET', $url)->getBody()->getContents();
     }
 
-    protected function getSlug(int $status): string
+    protected function getWorkTypeSlug(int $status): string
     {
-        if (! isset($this->map[$status])) {
+        if (! isset($this->statusMap[$status])) {
             throw new GivenInCorrectStatus();
         }
 
-        return $this->map[$status];
+        return $this->statusMap[$status];
+    }
+
+    protected function getCountry(string $code): string
+    {
+        if (! isset($this->countryMap[$code])) {
+            throw new SelectedCountryNotAllowed();
+        }
+
+        return $this->countryMap[$code];
     }
 }

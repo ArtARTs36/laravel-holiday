@@ -8,10 +8,13 @@ class Day
 
     protected $workTypeSlug;
 
-    public function __construct(\DateTimeInterface $date, string $workTypeSlug)
+    protected $countryCode;
+
+    public function __construct(\DateTimeInterface $date, string $workTypeSlug, string $countryCode)
     {
         $this->date = $date;
         $this->workTypeSlug = $workTypeSlug;
+        $this->countryCode = $countryCode;
     }
 
     public function getDate(): \DateTimeInterface
@@ -22,5 +25,10 @@ class Day
     public function getWorkTypeSlug(): string
     {
         return $this->workTypeSlug;
+    }
+
+    public function getCountryCode(): string
+    {
+        return $this->countryCode;
     }
 }

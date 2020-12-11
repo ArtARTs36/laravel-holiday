@@ -5,6 +5,7 @@ namespace ArtARTs36\LaravelHoliday\Services;
 use ArtARTs36\LaravelHoliday\Contracts\WorkTypeDeterminer;
 use ArtARTs36\LaravelHoliday\Entities\Day;
 use ArtARTs36\LaravelHoliday\Exceptions\GivenInCorrectFetchType;
+use ArtARTs36\LaravelHoliday\Models\Country;
 use ArtARTs36\LaravelHoliday\Models\Holiday;
 use ArtARTs36\LaravelHoliday\Models\WorkType;
 use Illuminate\Support\Carbon;
@@ -50,9 +51,11 @@ class Fetch
     protected function saveDays(array $days): array
     {
         $workTypes = WorkType::all()->pluck(null, WorkType::FIELD_SLUG);
+        $countries = Country::all()->pluck(null, Country::FIELD_CODE);
 
         $holidays = [];
 
+        /** @var Day $day */
         foreach ($days as $day) {
             if (! WorkType::isHoliday($day->getWorkTypeSlug())) {
                 continue;
@@ -61,6 +64,7 @@ class Fetch
             $holidays[] = Holiday::query()->create([
                 Holiday::FIELD_WORK_TYPE_ID => $workTypes[$day->getWorkTypeSlug()]->id,
                 Holiday::FIELD_DATE => $day->getDate(),
+                Holiday::FIELD_COUNTRY_ID => $countries[$day->getCountryCode()]->id,
             ]);
         }
 
