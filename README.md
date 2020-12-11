@@ -2,6 +2,12 @@
 
 With this package you can save dates of holidays or shortened days on your Laravel application.
 
+![Testing](https://github.com/ArtARTs36/laravel-holiday/workflows/Testing/badge.svg?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<a href="https://poser.pugx.org/artarts36/laravel-holiday/d/total.svg">
+    <img src="https://poser.pugx.org/artarts36/laravel-holiday/d/total.svg" alt="Total Downloads">
+</a>
+
 ## Install
 
 Run command: `composer require artarts36/laravel-holiday`
@@ -50,5 +56,21 @@ $client = new \GuzzleHttp\Client([
 
 $isDayOff = new \ArtARTs36\LaravelHoliday\Determiners\IsDayOff($client);
 
-var_dump($isDayOff->determineYear(20);
+var_dump($isDayOff->determineYear(20));
+```
+
+##### Save Holidays for a current year
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_CURRENT_YEAR);
+```
+
+##### Save Holidays for a current month
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_CURRENT_MONTH);
 ```

@@ -16,7 +16,7 @@
     "minimum-stability": "dev",
     "prefer-stable":true,
     "require": {
-        "php": ">=7.2.0, <7.4.0",
+        "php": ">=7.2.0",
         "ext-json": "*",
         "doctrine/dbal": "^2.6",
         "laravel/framework": "6.*",
@@ -49,9 +49,7 @@
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
         "lint": [
             "./vendor/bin/phpcs --standard=PSR2 src/",
-            "./vendor/bin/phpcs --standard=PSR2 tests/Prototypes",
-            "./vendor/bin/phpcs --standard=PSR2 tests/Unit",
-            "./vendor/bin/phpcs --standard=PSR2 tests/TestCase.php"
+            "./vendor/bin/phpcs --standard=PSR2 tests/"
         ]
     },
     "extra": {
