@@ -56,5 +56,21 @@ $client = new \GuzzleHttp\Client([
 
 $isDayOff = new \ArtARTs36\LaravelHoliday\Determiners\IsDayOff($client);
 
-var_dump($isDayOff->determineYear(20);
+var_dump($isDayOff->determineYear(20));
+```
+
+##### Save Holidays for a current year
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_CURRENT_YEAR);
+```
+
+##### Save Holidays for a current month
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_CURRENT_MONTH);
 ```
