@@ -63,6 +63,14 @@ $isDayOff = new \ArtARTs36\LaravelHoliday\Determiners\IsDayOff($client);
 var_dump($isDayOff->determineYear(20));
 ```
 
+##### Save Holidays for a concrete year
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch('2019');
+```
+
 ##### Save Holidays for a current year
 
 ```php

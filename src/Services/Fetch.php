@@ -28,17 +28,16 @@ class Fetch
      */
     public function fetch(string $type): array
     {
-        switch ($type) {
-            case static::TYPE_CURRENT_MONTH:
-                $days = $this->determiner->determinePeriod(Carbon::parse('1 month ago'), Carbon::now());
+        $days = null;
 
-                break;
-            case static::TYPE_CURRENT_YEAR:
-                $days = $this->determiner->determineYear(Carbon::now()->year);
-
-                break;
-            default:
-                throw new GivenInCorrectFetchType();
+        if ($type === static::TYPE_CURRENT_MONTH) {
+            $days = $this->determiner->determinePeriod(Carbon::parse('1 month ago'), Carbon::now());
+        } elseif ($type === static::TYPE_CURRENT_YEAR) {
+            $days = $this->determiner->determineYear(Carbon::now()->year);
+        } elseif (mb_strlen($type) === 4 && is_numeric($type)) {
+            $days = $this->determiner->determineYear((int) $type);
+        } else {
+            throw new GivenInCorrectFetchType();
         }
 
         return $this->saveDays($days);
