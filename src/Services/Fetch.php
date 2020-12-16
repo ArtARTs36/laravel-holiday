@@ -14,6 +14,7 @@ class Fetch
 {
     public const TYPE_CURRENT_YEAR = 'current-year';
     public const TYPE_CURRENT_MONTH = 'current-month';
+    public const TYPE_NEXT_WEEK = 'next-week';
 
     protected $determiner;
 
@@ -35,7 +36,12 @@ class Fetch
         } elseif ($type === static::TYPE_CURRENT_YEAR) {
             $days = $this->determiner->determineYear(Carbon::now()->year);
         } elseif (mb_strlen($type) === 4 && is_numeric($type)) {
-            $days = $this->determiner->determineYear((int) $type);
+            $days = $this->determiner->determineYear((int)$type);
+        } elseif ($type === static::TYPE_NEXT_WEEK) {
+            $days = $this->determiner->determinePeriod(
+                Carbon::parse('monday next week'),
+                Carbon::parse('sunday next week')
+            );
         } else {
             throw new GivenInCorrectFetchType();
         }

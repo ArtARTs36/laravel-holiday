@@ -86,3 +86,11 @@ $fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
 
 $fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_CURRENT_MONTH);
 ```
+
+##### Save Holidays for a next week
+
+```php
+$fetch = app(\ArtARTs36\LaravelHoliday\Services\Fetch::class);
+
+$fetch->fetch(\ArtARTs36\LaravelHoliday\Services\Fetch::TYPE_NEXT_WEEK);
+```
