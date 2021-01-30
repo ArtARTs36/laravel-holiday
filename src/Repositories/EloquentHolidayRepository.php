@@ -2,10 +2,11 @@
 
 namespace ArtARTs36\LaravelHoliday\Repositories;
 
+use ArtARTs36\LaravelHoliday\Contracts\HolidayRepository;
 use ArtARTs36\LaravelHoliday\Models\Holiday;
 use Illuminate\Support\Collection;
 
-class HolidayRepository
+class EloquentHolidayRepository implements HolidayRepository
 {
     /**
      * @return Collection<Holiday>

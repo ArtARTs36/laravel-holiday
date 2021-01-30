@@ -3,13 +3,19 @@
 namespace ArtARTs36\LaravelHoliday\Providers;
 
 use ArtARTs36\LaravelHoliday\Console\FetchHolidays;
+use ArtARTs36\LaravelHoliday\Contracts\HolidayRepository;
 use ArtARTs36\LaravelHoliday\Contracts\WorkTypeDeterminer;
 use ArtARTs36\LaravelHoliday\Determiners\IsDayOff;
+use ArtARTs36\LaravelHoliday\Repositories\EloquentHolidayRepository;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\ServiceProvider;
 
 class HolidayProvider extends ServiceProvider
 {
+    public $bindings = [
+        HolidayRepository::class => EloquentHolidayRepository::class,
+    ];
+
     protected const CONFIG_PATH = __DIR__ . '/../../config/holiday.php';
 
     public function boot()
